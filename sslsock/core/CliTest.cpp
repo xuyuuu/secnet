@@ -13,6 +13,8 @@
 
 #include <iostream>
 
+#define SSLSOCK_ROOTCA_FILE "../pem/cacert.pem"
+
 int main (int argc, char **argv)
 {
 	int ret, fd;
@@ -23,6 +25,10 @@ int main (int argc, char **argv)
 	OpenSSL_add_ssl_algorithms();
 	SSL_load_error_strings();
 	ctx = SSL_CTX_new(SSLv3_client_method());
+
+	/*The following two sentences can be ignored which is foring asking certificate file*/
+	SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
+	SSL_CTX_load_verify_locations(ctx, SSLSOCK_ROOTCA_FILE,NULL);
 
 	/*init socket*/
 	fd = socket(AF_INET, SOCK_STREAM, 0);
