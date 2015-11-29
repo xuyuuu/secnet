@@ -153,7 +153,14 @@ void SockSSL::run()
 					std::vector<uint8_t> buff(2048, 0);
 					rsz = enrecv(pnew->get_fd(), buff, 2048, &mclose);
 					if(rsz <= 0)
-						continue;	
+					{
+						if(pnew->getdone() && mclose)
+						{
+							this->epnode->ep_delete(EPOLLIN | EPOLLET, pnew->get_fd());	
+							_fdmap.erase(it);
+						}
+						continue;
+					}
 
 					/*write into rbio*/
 					BIO_write(pnew->get_rbio(), const_cast<uint8_t *>(&buff.at(0)), rsz);
@@ -189,7 +196,6 @@ void SockSSL::run()
 
 					if(mclose)
 					{
-		std::cout << "############################2" << std::endl;
 						this->epnode->ep_delete(EPOLLIN | EPOLLET, pnew->get_fd());	
 						_fdmap.erase(it);
 					}
