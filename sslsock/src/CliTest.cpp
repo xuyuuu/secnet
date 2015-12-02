@@ -18,6 +18,10 @@
 int main (int argc, char **argv)
 {
 	int ret, fd;
+	if(argc != 2)
+	{
+		std::cout << "Arguments size is error !" << std::endl;	
+	}
 
 	/*init openssl*/
 	SSL_CTX* ctx;
@@ -55,9 +59,16 @@ int main (int argc, char **argv)
 
 	std::cout << "SSL : " << SSL_get_cipher(ssl) << std::endl;
 
-	ret = SSL_write(ssl, "Hello xuyuu!", strlen("Hello xuyuu!"));
+	ret = SSL_write(ssl, argv[1], strlen(argv[1]));
 
-	std::cout << "SSL send data size : " << ret << std::endl;
+	if(ret > 0)
+	{
+		char recvbuf[2048] = {0};
+		ret = SSL_read(ssl, recvbuf, sizeof(recvbuf));
+
+		if(ret > 0)
+			std::cout << "recv : " << recvbuf << std::endl;
+	}
 
 	close(fd);
 	SSL_free(ssl);

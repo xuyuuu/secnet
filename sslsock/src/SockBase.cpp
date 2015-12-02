@@ -91,7 +91,7 @@ int SockBase::ensend(int fd, char *p, int sz)
 		n = send(fd, p + tot, sz - tot, 0);
 
 		if(n < 0 && (errno == EWOULDBLOCK || errno == EAGAIN))
-			continue;
+			break;
 		else if(n > 0){
 			tot += n;
 			if(tot == sz)

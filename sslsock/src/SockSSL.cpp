@@ -186,13 +186,28 @@ void SockSSL::run()
 						continue;
 					}else{
 						/*read encrypt data*/
+
+#if 0 //cout read data
 						while((rsz = BIO_pending(pnew->get_rbio())) > 0){
 							memset(rpool, 0x0, sizeof(rpool));
 							rsz = SSL_read(pnew->get_ssl(), rpool, sizeof(rpool));	
 							if(rsz > 0)
 								std::cout<< "recv message: " << rpool << std::endl;
 						}
+#endif
+#if 1 // echo read data
+						while((rsz = BIO_pending(pnew->get_rbio())) > 0){
+							memset(rpool, 0x0, sizeof(rpool));
+							rsz = SSL_read(pnew->get_ssl(), rpool, sizeof(rpool));
+							if(rsz > 0)
+								SSL_write(pnew->get_ssl(), rpool, rsz);
+						}
+
+						if(BIO_pending(pnew->get_wbio()) > 0)
+							this->epnode->ep_modify(EPOLLIN | EPOLLOUT | EPOLLET, pnew->get_fd());
+#endif
 					}
+
 
 					if(mclose)
 					{
@@ -221,7 +236,7 @@ void SockSSL::run()
 					memset(tmpbuffer, 0x0, sizeof(tmpbuffer));
 				}
 
-				n = send(pnew->get_fd(), &outbuffer[0], outbuffer.size(), 0);
+				n = ensend(pnew->get_fd(), &outbuffer[0], outbuffer.size());
 
 				if(n == -1 && errno != EAGAIN & errno != EWOULDBLOCK){
 					this->epnode->ep_delete(EPOLLIN | EPOLLET, pnew->get_fd());	
