@@ -1,12 +1,28 @@
 #secnet</br>   
 -----------------lhash----------------     
 openssl库中hash table的实现和使用demo</br>     
+
 ----------------stack-----------------      
 openssl库中stack的实现和使用demo</br>    
----------------echo_server------------      
-1.基于openssl库实现的安全网络通信     
-2.使用了epoll ET的非阻塞模式进行通信     
-</br>    
+
+=============================================
+echo_server           
+=============================================
+
+=============================================
+Project Introduction   
+=============================================
+1.Build A Echo Server which is based in openssl library.     
+2.The Server create nonblock socket and use epoll ET mode to communicate with client.    
+
+=============================================
+Build and use
+=============================================
+1. 'cd echo_server'
+2. run 'make' to produce SSLServer and SSLClient.   
+3. run 'SSLServer' to listen network event.   
+4. run 'SSLClient message' to send request to server.   
+
 Thanks for looking .       
 
 
